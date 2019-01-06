@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Diesel Cycle Example &#8212; thermostate 0.5.1.dev0 documentation</title>
+    <title>Diesel Cycle Example &#8212; thermostate 0.5.2.dev0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Rankine Cycle Example" href="rankine-cycle-example.html" />
@@ -89,18 +90,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -140,9 +141,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -150,7 +151,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -199,14 +200,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Diesel-Cycle-Example">
 <h1>Diesel Cycle Example<a class="headerlink" href="#Diesel-Cycle-Example" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="Imports">
 <h2>Imports<a class="headerlink" href="#Imports" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -222,8 +256,7 @@ div.nboutput div.output_area.stderr {
 <div class="section" id="Definitions">
 <h2>Definitions<a class="headerlink" href="#Definitions" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -245,19 +278,12 @@ div.nboutput div.output_area.stderr {
 <hr class="docutils" />
 <div class="section" id="Problem-Statement">
 <h2>Problem Statement<a class="headerlink" href="#Problem-Statement" title="Permalink to this headline">¶</a></h2>
-<p>A four-cylinder Diesel engine has a BDC volume of 3.0 L per cylinder.
-The engine operates on the air-standard Diesel cycle with a compression
-ratio of 18.0 and a cutoff ratio of 3.0 . Air is at 25.0 celsius and
-95.0 kPa at the beginning of the compression process. Determine</p>
+<p>A four-cylinder Diesel engine has a BDC volume of 3.0 L per cylinder. The engine operates on the air-standard Diesel cycle with a compression ratio of 18.0 and a cutoff ratio of 3.0 . Air is at 25.0 celsius and 95.0 kPa at the beginning of the compression process. Determine</p>
 <ol class="arabic simple">
 <li>the amount of power delivered by the engine, in kW, at 1700.0 rpm</li>
 <li>the thermal efficiency</li>
-<li>plot the power output as a function of the cutoff ratio, with values
-for <span class="math notranslate nohighlight">\(r_c\)</span> from 1.1 to 4.5 , holding all other given values
-constant</li>
-<li>plot the thermal efficiency as a function of the cutoff ratio, with
-values for <span class="math notranslate nohighlight">\(r_c\)</span> from 1.1 to 4.5 , holding all other given
-values constant</li>
+<li>plot the power output as a function of the cutoff ratio, with values for <span class="math notranslate nohighlight">\(r_c\)</span> from 1.1 to 4.5 , holding all other given values constant</li>
+<li>plot the thermal efficiency as a function of the cutoff ratio, with values for <span class="math notranslate nohighlight">\(r_c\)</span> from 1.1 to 4.5 , holding all other given values constant</li>
 </ol>
 </div>
 <hr class="docutils" />
@@ -265,20 +291,15 @@ values constant</li>
 <h2>Solution<a class="headerlink" href="#Solution" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="1.-the-power-delivered">
 <h3>1. the power delivered<a class="headerlink" href="#1.-the-power-delivered" title="Permalink to this headline">¶</a></h3>
-<p>The power output can be found by taking the product of the net work per
-cylinder, the number of cylinders, and the net work per revolution</p>
+<p>The power output can be found by taking the product of the net work per cylinder, the number of cylinders, and the net work per revolution</p>
 <div class="math notranslate nohighlight">
 \[\dot{W}_{net} = n_C \frac{N}{2} W_{net}\]</div>
-<p>First, we need to fix the four states. State 1 uses <span class="math notranslate nohighlight">\(p\)</span> and
-<span class="math notranslate nohighlight">\(T\)</span>, state 2 uses <span class="math notranslate nohighlight">\(s\)</span> and <span class="math notranslate nohighlight">\(v\)</span>, state 3 uses <span class="math notranslate nohighlight">\(p\)</span>
-and <span class="math notranslate nohighlight">\(v\)</span>, and state 4 uses <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(s\)</span>. We need to
-calculate the mass of air in one cylinder using the ideal gas law</p>
+<p>First, we need to fix the four states. State 1 uses <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, state 2 uses <span class="math notranslate nohighlight">\(s\)</span> and <span class="math notranslate nohighlight">\(v\)</span>, state 3 uses <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(v\)</span>, and state 4 uses <span class="math notranslate nohighlight">\(v\)</span> and <span class="math notranslate nohighlight">\(s\)</span>. We need to calculate the mass of air in one cylinder using the ideal gas law</p>
 <div class="math notranslate nohighlight">
 \[m = \frac{pV}{RT}\]</div>
 <p>where <span class="math notranslate nohighlight">\(R=\overline{R}/MW\)</span> is the gas-specific constant.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -314,8 +335,7 @@ calculate the mass of air in one cylinder using the ideal gas law</p>
 </pre></div>
 </div>
 </div>
-<p>The mass of air in one cylinder is <span class="math notranslate nohighlight">\(m =\)</span> 3330.61 mg. Summarizing
-the states:</p>
+<p>The mass of air in one cylinder is <span class="math notranslate nohighlight">\(m =\)</span> 3330.61 mg. Summarizing the states:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="9%" />
@@ -366,8 +386,7 @@ the states:</p>
 </tbody>
 </table>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -414,11 +433,9 @@ the states:</p>
 </tr>
 </tbody>
 </table>
-<p>and the net work output per cylinder per cycle is <span class="math notranslate nohighlight">\(W_{net} =\)</span> 3.87
-kJ. Then, calculating the power output</p>
+<p>and the net work output per cylinder per cycle is <span class="math notranslate nohighlight">\(W_{net} =\)</span> 3.87 kJ. Then, calculating the power output</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -431,8 +448,7 @@ kJ. Then, calculating the power output</p>
 <div class="section" id="2.-the-thermal-efficiency">
 <h3>2. the thermal efficiency<a class="headerlink" href="#2.-the-thermal-efficiency" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -444,12 +460,9 @@ kJ. Then, calculating the power output</p>
 </div></div>
 <div class="section" id="3.-plot-the-net-power-output-as-a-function-of-r_c">
 <h3>3. plot the net power output as a function of <span class="math notranslate nohighlight">\(r_c\)</span><a class="headerlink" href="#3.-plot-the-net-power-output-as-a-function-of-r_c" title="Permalink to this headline">¶</a></h3>
-<p>For this part (and the next one), only states 3 and 4 are changed by
-changing the cutoff ratio. Therefore, we only re-compute those states,
-and the associated work and heat transfer values, in the following loop.</p>
+<p>For this part (and the next one), only states 3 and 4 are changed by changing the cutoff ratio. Therefore, we only re-compute those states, and the associated work and heat transfer values, in the following loop.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -482,8 +495,7 @@ and the associated work and heat transfer values, in the following loop.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -507,8 +519,7 @@ and the associated work and heat transfer values, in the following loop.</p>
 <div class="section" id="4.-plot-\eta-vs.-r_c">
 <h3>4. plot <span class="math notranslate nohighlight">\(\eta\)</span> vs. <span class="math notranslate nohighlight">\(r_c\)</span><a class="headerlink" href="#4.-plot-\eta-vs.-r_c" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -528,8 +539,7 @@ and the associated work and heat transfer values, in the following loop.</p>
 <img alt="_images/diesel-cycle-example_23_0.png" src="_images/diesel-cycle-example_23_0.png" />
 </div>
 </div>
-<p>From these graphs, we note that as the cutoff ratio increases, the power
-delivered increases but the thermal efficiency decreases.</p>
+<p>From these graphs, we note that as the cutoff ratio increases, the power delivered increases but the thermal efficiency decreases.</p>
 </div>
 </div>
 </div>
@@ -619,7 +629,7 @@ delivered increases but the thermal efficiency decreases.</p>
   </a>
   
   |
-  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
   &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
   
   |

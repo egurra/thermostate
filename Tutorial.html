@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Tutorial &#8212; thermostate 0.5.1.dev0 documentation</title>
+    <title>Tutorial &#8212; thermostate 0.5.2.dev0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Examples" href="examples.html" />
@@ -89,18 +90,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -140,9 +141,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -150,7 +151,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -199,23 +200,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Tutorial">
 <h1>Tutorial<a class="headerlink" href="#Tutorial" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial will guide you in the basic use of ThermoState. The
-ThermoState package is designed to ease the evaluation of thermodynamic
-properties for common substances used in Mechanical Engineering courses.
-Rather than looking up the information in a table and interpolating, we
-can input properties for the states directly, and all unknown values are
-automatically calculated.</p>
-<p>ThermoState uses <a class="reference external" href="http://www.coolprop.org/">CoolProp</a> and
-<a class="reference external" href="https://pint.readthedocs.io">Pint</a> to enable easy property
-evaluation in any unit system. The first thing we need to do is import
-the parts of ThermoState that we will use. This adds them to the set of
-local variables</p>
+<p>This tutorial will guide you in the basic use of ThermoState. The ThermoState package is designed to ease the evaluation of thermodynamic properties for common substances used in Mechanical Engineering courses. Rather than looking up the information in a table and interpolating, we can input properties for the states directly, and all unknown values are automatically calculated.</p>
+<p>ThermoState uses <a class="reference external" href="http://www.coolprop.org/">CoolProp</a> and <a class="reference external" href="https://pint.readthedocs.io">Pint</a> to enable easy property evaluation in any unit system. The first thing we need to do is import the parts of ThermoState that we will use. This adds them to the set of local variables</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -225,15 +250,9 @@ local variables</p>
 </div>
 <div class="section" id="Pint-and-Units">
 <h2>Pint and Units<a class="headerlink" href="#Pint-and-Units" title="Permalink to this headline">¶</a></h2>
-<p>Now that the interface has been imported, we can create some properties.
-For instance, let’s say we’re given the pressure and temperature
-properties for water, and asked to determine the specific volume. First,
-let’s create variables that set the pressure and temperature. We will
-use the Pint <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> function, which we have called <code class="docutils literal notranslate"><span class="pre">Q_</span></code>. The
-syntax for the <code class="docutils literal notranslate"><span class="pre">Q_</span></code> function is <code class="docutils literal notranslate"><span class="pre">Q_(value,</span> <span class="pre">'units')</span></code>.</p>
+<p>Now that the interface has been imported, we can create some properties. For instance, let’s say we’re given the pressure and temperature properties for water, and asked to determine the specific volume. First, let’s create variables that set the pressure and temperature. We will use the Pint <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> function, which we have called <code class="docutils literal notranslate"><span class="pre">Q_</span></code>. The syntax for the <code class="docutils literal notranslate"><span class="pre">Q_</span></code> function is <code class="docutils literal notranslate"><span class="pre">Q_(value,</span> <span class="pre">'units')</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -241,11 +260,9 @@ syntax for the <code class="docutils literal notranslate"><span class="pre">Q_</
 </pre></div>
 </div>
 </div>
-<p>We can use whatever units we’d like, Pint supports a wide variety of
-units.</p>
+<p>We can use whatever units we’d like, Pint supports a wide variety of units.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -255,21 +272,15 @@ units.</p>
 </pre></div>
 </div>
 </div>
-<p>Another way to specify the units is to use the <code class="docutils literal notranslate"><span class="pre">units</span></code> class that we
-imported. This class has a number of attributes (text following a
-period) that can be used to create a quantity with units by multiplying
-a number with the unit.</p>
+<p>Another way to specify the units is to use the <code class="docutils literal notranslate"><span class="pre">units</span></code> class that we imported. This class has a number of attributes (text following a period) that can be used to create a quantity with units by multiplying a number with the unit.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">units</span><span class="o">.</span><span class="n">degR</span>
 <span class="c1">#     ^^^^</span>
 <span class="c1"># This is the attribute</span>
 </pre></div>
 </div>
-<p>Let’s set the temperature now. The available units of temperature are
-<code class="docutils literal notranslate"><span class="pre">degF</span></code> (<code class="docutils literal notranslate"><span class="pre">fahrenheit</span></code>), <code class="docutils literal notranslate"><span class="pre">degR</span></code> (<code class="docutils literal notranslate"><span class="pre">rankine</span></code>), <code class="docutils literal notranslate"><span class="pre">degC</span></code>
-(<code class="docutils literal notranslate"><span class="pre">celsius</span></code>), and <code class="docutils literal notranslate"><span class="pre">K</span></code> (<code class="docutils literal notranslate"><span class="pre">kelvin</span></code>).</p>
+<p>Let’s set the temperature now. The available units of temperature are <code class="docutils literal notranslate"><span class="pre">degF</span></code> (<code class="docutils literal notranslate"><span class="pre">fahrenheit</span></code>), <code class="docutils literal notranslate"><span class="pre">degR</span></code> (<code class="docutils literal notranslate"><span class="pre">rankine</span></code>), <code class="docutils literal notranslate"><span class="pre">degC</span></code> (<code class="docutils literal notranslate"><span class="pre">celsius</span></code>), and <code class="docutils literal notranslate"><span class="pre">K</span></code> (<code class="docutils literal notranslate"><span class="pre">kelvin</span></code>).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -280,11 +291,9 @@ a number with the unit.</p>
 </pre></div>
 </div>
 </div>
-<p>The two ways of creating the units are equivalent. The following cell
-should print <code class="docutils literal notranslate"><span class="pre">True</span></code> to demonstrate this.</p>
+<p>The two ways of creating the units are equivalent. The following cell should print <code class="docutils literal notranslate"><span class="pre">True</span></code> to demonstrate this.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -293,8 +302,7 @@ should print <code class="docutils literal notranslate"><span class="pre">True</
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -302,17 +310,11 @@ should print <code class="docutils literal notranslate"><span class="pre">True</
 </pre></div>
 </div>
 </div>
-<p>Note the convention we are using here: the variables are named with the
-property, followed by an underscore, then the number of the state. In
-this case, we are setting properties for state 1, hence <code class="docutils literal notranslate"><span class="pre">T_1</span></code> and
-<code class="docutils literal notranslate"><span class="pre">p_1</span></code>.</p>
+<p>Note the convention we are using here: the variables are named with the property, followed by an underscore, then the number of the state. In this case, we are setting properties for state 1, hence <code class="docutils literal notranslate"><span class="pre">T_1</span></code> and <code class="docutils literal notranslate"><span class="pre">p_1</span></code>.</p>
 </div>
 <div class="section" id="ThermoState">
 <h2>ThermoState<a class="headerlink" href="#ThermoState" title="Permalink to this headline">¶</a></h2>
-<p>Now that we have defined two properties with units, let’s define a
-state. First, we create a variable to hold the <code class="docutils literal notranslate"><span class="pre">State</span></code> and tell
-ThermoState what substance we want to use with that state. The available
-substances are:</p>
+<p>Now that we have defined two properties with units, let’s define a state. First, we create a variable to hold the <code class="docutils literal notranslate"><span class="pre">State</span></code> and tell ThermoState what substance we want to use with that state. The available substances are:</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">water</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">air</span></code></li>
@@ -325,12 +327,9 @@ substances are:</p>
 <li><code class="docutils literal notranslate"><span class="pre">oxygen</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">nitrogen</span></code></li>
 </ul>
-<p>Note that the name of the substance is case-insensitive (it doesn’t
-matter whether you use lower case or upper case). It is often easiest to
-set the name of the substance in a variable, like:</p>
+<p>Note that the name of the substance is case-insensitive (it doesn’t matter whether you use lower case or upper case). It is often easiest to set the name of the substance in a variable, like:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -338,26 +337,17 @@ set the name of the substance in a variable, like:</p>
 </pre></div>
 </div>
 </div>
-<p>Now we need to create the <code class="docutils literal notranslate"><span class="pre">State</span></code> and assign values for the
-properties. Properties of the state are set as arguments to the
-<code class="docutils literal notranslate"><span class="pre">State</span></code> class, and they must always be set in pairs, we cannot set a
-single property at a time. The syntax is</p>
+<p>Now we need to create the <code class="docutils literal notranslate"><span class="pre">State</span></code> and assign values for the properties. Properties of the state are set as arguments to the <code class="docutils literal notranslate"><span class="pre">State</span></code> class, and they must always be set in pairs, we cannot set a single property at a time. The syntax is</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">st</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">substance</span><span class="p">,</span> <span class="n">property_1</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">property_2</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition warning">
 <p class="admonition-title"><strong>Warning</strong></p>
-<p>Remember that two independent and intensive properties are required to
-set the state!</p>
+<p>Remember that two independent and intensive properties are required to set the state!</p>
 </div>
-<p>To demonstrate, we will set the <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">p</span></code> properties of the state
-and set them equal to the temperature and pressure we defined above.
-Note that the capitalization of the properties is important! The <code class="docutils literal notranslate"><span class="pre">p</span></code>
-is lower case while the <code class="docutils literal notranslate"><span class="pre">T</span></code> is upper case (lower case <code class="docutils literal notranslate"><span class="pre">t</span></code> means
-time).</p>
+<p>To demonstrate, we will set the <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">p</span></code> properties of the state and set them equal to the temperature and pressure we defined above. Note that the capitalization of the properties is important! The <code class="docutils literal notranslate"><span class="pre">p</span></code> is lower case while the <code class="docutils literal notranslate"><span class="pre">T</span></code> is upper case (lower case <code class="docutils literal notranslate"><span class="pre">t</span></code> means time).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -374,8 +364,7 @@ T = 400 kelvin, p = 1.0 atmosphere
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -383,14 +372,10 @@ T = 400 kelvin, p = 1.0 atmosphere
 </pre></div>
 </div>
 </div>
-<p>Note again the convention we are using here: The state is labeled by
-<code class="docutils literal notranslate"><span class="pre">st</span></code>, then an underscore, then the number of the state.</p>
-<p>The variables that we use on the right side of the equal sign in the
-<code class="docutils literal notranslate"><span class="pre">State</span></code> function can be named anything we want. For instance, the
-following code is exactly equivalent to what we did before.</p>
+<p>Note again the convention we are using here: The state is labeled by <code class="docutils literal notranslate"><span class="pre">st</span></code>, then an underscore, then the number of the state.</p>
+<p>The variables that we use on the right side of the equal sign in the <code class="docutils literal notranslate"><span class="pre">State</span></code> function can be named anything we want. For instance, the following code is exactly equivalent to what we did before.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -415,17 +400,9 @@ Does st_starwars equal st_1? True
 </div>
 <div class="admonition warning">
 <p class="admonition-title"><strong>Warning</strong></p>
-<p>To avoid confusing yourself, name your variables to something useful.
-For instance, use the property symbol, then an underscore, then the
-state number, as in <code class="docutils literal notranslate"><span class="pre">p_1</span> <span class="pre">=</span> <span class="pre">Q_(1.0,</span> <span class="pre">'atm')</span></code> to indicate the pressure at
-state 1. In my notes and solutions, this is the convention that I will
-follow, and I will use <code class="docutils literal notranslate"><span class="pre">st_#</span></code> to indicate a <code class="docutils literal notranslate"><span class="pre">State</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">st_1</span></code>
-is state 1, <code class="docutils literal notranslate"><span class="pre">st_2</span></code> is state 2, and so forth).</p>
+<p>To avoid confusing yourself, name your variables to something useful. For instance, use the property symbol, then an underscore, then the state number, as in <code class="docutils literal notranslate"><span class="pre">p_1</span> <span class="pre">=</span> <span class="pre">Q_(1.0,</span> <span class="pre">'atm')</span></code> to indicate the pressure at state 1. In my notes and solutions, this is the convention that I will follow, and I will use <code class="docutils literal notranslate"><span class="pre">st_#</span></code> to indicate a <code class="docutils literal notranslate"><span class="pre">State</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">st_1</span></code> is state 1, <code class="docutils literal notranslate"><span class="pre">st_2</span></code> is state 2, and so forth).</p>
 </div>
-<p>In theory, any two pairs of independent properties can be used to set
-the state. In reality, the pairs of properties available to set the
-state is slightly limited because of the way the equation of state is
-written. The available pairs of properties are</p>
+<p>In theory, any two pairs of independent properties can be used to set the state. In reality, the pairs of properties available to set the state is slightly limited because of the way the equation of state is written. The available pairs of properties are</p>
 <ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">Tp</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">Ts</span></code></li>
@@ -441,17 +418,9 @@ written. The available pairs of properties are</p>
 <li><code class="docutils literal notranslate"><span class="pre">hs</span></code></li>
 <li><code class="docutils literal notranslate"><span class="pre">hv</span></code></li>
 </ul>
-<p>The reverse of any of these pairs is also possible and totally
-equivalent.</p>
-<p>By setting two properties in this way, the <code class="docutils literal notranslate"><span class="pre">State</span></code> class will
-calculate all the other properties we might be interested in. We can
-access the value of any property by getting the attribute for that
-property. The available properties are <code class="docutils literal notranslate"><span class="pre">T</span></code> (temperature), <code class="docutils literal notranslate"><span class="pre">p</span></code>
-(pressure), <code class="docutils literal notranslate"><span class="pre">v</span></code> (mass-specific volume), <code class="docutils literal notranslate"><span class="pre">u</span></code> (mass-specific internal
-energy), <code class="docutils literal notranslate"><span class="pre">h</span></code> (mass-specific enthalpy), <code class="docutils literal notranslate"><span class="pre">s</span></code> (mass-specific entropy),
-<code class="docutils literal notranslate"><span class="pre">x</span></code> (quality), <code class="docutils literal notranslate"><span class="pre">cp</span></code> (specific heat at constant pressure), <code class="docutils literal notranslate"><span class="pre">cv</span></code>
-(specific heat at constant volume), and <code class="docutils literal notranslate"><span class="pre">phase</span></code> (the phase of this
-state). The syntax is</p>
+<p>The reverse of any of these pairs is also possible and totally equivalent.</p>
+<p>By setting two properties in this way, the <code class="docutils literal notranslate"><span class="pre">State</span></code> class will calculate all the other properties we might be interested in. We can access the value of any property by getting the attribute for that property. The available properties are <code class="docutils literal notranslate"><span class="pre">T</span></code> (temperature), <code class="docutils literal notranslate"><span class="pre">p</span></code> (pressure), <code class="docutils literal notranslate"><span class="pre">v</span></code> (mass-specific volume), <code class="docutils literal notranslate"><span class="pre">u</span></code> (mass-specific internal energy), <code class="docutils literal notranslate"><span class="pre">h</span></code> (mass-specific enthalpy), <code class="docutils literal notranslate"><span class="pre">s</span></code> (mass-specific entropy), <code class="docutils literal notranslate"><span class="pre">x</span></code> (quality), <code class="docutils literal notranslate"><span class="pre">cp</span></code> (specific heat at constant pressure), <code class="docutils literal notranslate"><span class="pre">cv</span></code> (specific heat at
+constant volume), and <code class="docutils literal notranslate"><span class="pre">phase</span></code> (the phase of this state). The syntax is</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">State</span><span class="o">.</span><span class="n">property</span>
 </pre></div>
 </div>
@@ -470,13 +439,10 @@ state). The syntax is</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title"><strong>Note</strong></p>
-<p>Capitalization is important! The temperature has upper case <code class="docutils literal notranslate"><span class="pre">T</span></code>, while
-the other properties are lower case to indicate that they are
-mass-specific quantities.</p>
+<p>Capitalization is important! The temperature has upper case <code class="docutils literal notranslate"><span class="pre">T</span></code>, while the other properties are lower case to indicate that they are mass-specific quantities.</p>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -510,18 +476,10 @@ cv_1 = 1509.1482452129906 joule / kelvin / kilogram
 phase_1 = gas
 </pre></div></div>
 </div>
-<p>In this case, the value for the quality is the special Python value
-<code class="docutils literal notranslate"><span class="pre">None</span></code>. This is because at 400 K and 101325 Pa, the state of water is
-a <strong>superheated vapor</strong> and the quality is <strong>undefined</strong> except in the
-vapor dome. To access states in the vapor dome, we cannot use <code class="docutils literal notranslate"><span class="pre">T</span></code> and
-<code class="docutils literal notranslate"><span class="pre">p</span></code> as independent properties, because they are not independent inside
-the vapor dome. Instead, we have to use the pairs involving the other
-properties (possibly including the quality) to set the state. When we
-define the quality, the units are <code class="docutils literal notranslate"><span class="pre">dimensionless</span></code> or <code class="docutils literal notranslate"><span class="pre">percent</span></code>. For
-instance:</p>
+<p>In this case, the value for the quality is the special Python value <code class="docutils literal notranslate"><span class="pre">None</span></code>. This is because at 400 K and 101325 Pa, the state of water is a <strong>superheated vapor</strong> and the quality is <strong>undefined</strong> except in the vapor dome. To access states in the vapor dome, we cannot use <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">p</span></code> as independent properties, because they are not independent inside the vapor dome. Instead, we have to use the pairs involving the other properties (possibly including the quality) to set the state. When we
+define the quality, the units are <code class="docutils literal notranslate"><span class="pre">dimensionless</span></code> or <code class="docutils literal notranslate"><span class="pre">percent</span></code>. For instance:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -552,13 +510,9 @@ s_2 = 1911.9019425021506 joule / kelvin / kilogram
 x_2 = 0.1 dimensionless
 </pre></div></div>
 </div>
-<p>In addition, whether you use the <code class="docutils literal notranslate"><span class="pre">'dimensionless'</span></code> “units” for the
-quality as above, or use the <code class="docutils literal notranslate"><span class="pre">'percent'</span></code> “units”, the result is
-exactly equivalent. The next cell should print <code class="docutils literal notranslate"><span class="pre">True</span></code> to the screen to
-demonstrate this.</p>
+<p>In addition, whether you use the <code class="docutils literal notranslate"><span class="pre">'dimensionless'</span></code> “units” for the quality as above, or use the <code class="docutils literal notranslate"><span class="pre">'percent'</span></code> “units”, the result is exactly equivalent. The next cell should print <code class="docutils literal notranslate"><span class="pre">True</span></code> to the screen to demonstrate this.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -567,8 +521,7 @@ demonstrate this.</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>Out[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area highlight-none notranslate"><div class="highlight"><pre>
@@ -576,14 +529,9 @@ demonstrate this.</p>
 </pre></div>
 </div>
 </div>
-<p>From these results, we can see that the units of the units of the
-properties stored in the <code class="docutils literal notranslate"><span class="pre">State</span></code> are always SI units - Kelvin, Pascal,
-m3/kg, J/kg, and J/(kg-Kelvin). We can use the <code class="docutils literal notranslate"><span class="pre">to</span></code> function to
-convert the units to anything we want, provided the dimensions are
-compatible. The syntax is <code class="docutils literal notranslate"><span class="pre">State.property.to('units')</span></code>.</p>
+<p>From these results, we can see that the units of the units of the properties stored in the <code class="docutils literal notranslate"><span class="pre">State</span></code> are always SI units - Kelvin, Pascal, m3/kg, J/kg, and J/(kg-Kelvin). We can use the <code class="docutils literal notranslate"><span class="pre">to</span></code> function to convert the units to anything we want, provided the dimensions are compatible. The syntax is <code class="docutils literal notranslate"><span class="pre">State.property.to('units')</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -603,21 +551,15 @@ compatible. The syntax is <code class="docutils literal notranslate"><span class
 </div>
 <div class="admonition note">
 <p class="admonition-title"><strong>Note</strong></p>
-<p>The values are always converted in the <code class="docutils literal notranslate"><span class="pre">State</span></code> to SI units, no matter
-what the input units are. Therefore, if you want EE units as an output,
-you have to convert.</p>
+<p>The values are always converted in the <code class="docutils literal notranslate"><span class="pre">State</span></code> to SI units, no matter what the input units are. Therefore, if you want EE units as an output, you have to convert.</p>
 </div>
-<p>If we try to convert to a unit with incompatible dimensions, Pint will
-raise a <code class="docutils literal notranslate"><span class="pre">DimenstionalityError</span></code> exception.</p>
+<p>If we try to convert to a unit with incompatible dimensions, Pint will raise a <code class="docutils literal notranslate"><span class="pre">DimenstionalityError</span></code> exception.</p>
 <div class="admonition warning">
 <p class="admonition-title"><strong>Warning</strong></p>
-<p>If you get a <code class="docutils literal notranslate"><span class="pre">DimensionalityError</span></code>, examine your conversion very
-closely. The error message will tell you why the dimensions are
-incompatible!</p>
+<p>If you get a <code class="docutils literal notranslate"><span class="pre">DimensionalityError</span></code>, examine your conversion very closely. The error message will tell you why the dimensions are incompatible!</p>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -638,20 +580,13 @@ incompatible!</p>
 <span class="ansi-red-fg">DimensionalityError</span>: Cannot convert from &#39;kelvin&#39; ([temperature]) to &#39;joule&#39; ([length] ** 2 * [mass] / [time] ** 2)
 </pre></div></div>
 </div>
-<p>Here we have tried to convert from <code class="docutils literal notranslate"><span class="pre">'kelvin'</span></code> to <code class="docutils literal notranslate"><span class="pre">'joule'</span></code> and the
-error message <strong>which is the last line</strong> says</p>
+<p>Here we have tried to convert from <code class="docutils literal notranslate"><span class="pre">'kelvin'</span></code> to <code class="docutils literal notranslate"><span class="pre">'joule'</span></code> and the error message <strong>which is the last line</strong> says</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DimensionalityError</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">convert</span> <span class="kn">from</span> <span class="s1">&#39;kelvin&#39;</span> <span class="p">([</span><span class="n">temperature</span><span class="p">])</span> <span class="n">to</span> <span class="s1">&#39;joule&#39;</span> <span class="p">([</span><span class="n">length</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="n">mass</span><span class="p">]</span> <span class="o">/</span> <span class="p">[</span><span class="n">time</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The dimensions of a temperature are, well, temperature. The formula for
-energy (Joule) is <span class="math notranslate nohighlight">\(m*a*d\)</span> (mass times acceleration times
-distance), and in terms of dimensions, <span class="math notranslate nohighlight">\(M*L/T^2*L = L^2*M/T^2\)</span>
-(where in dimensions, capital <span class="math notranslate nohighlight">\(T\)</span> is time). Clearly, these
-dimensions are incompatible. A more subtle case might be trying to
-convert <strong>energy</strong> to <strong>power</strong> (again, not allowed):</p>
+<p>The dimensions of a temperature are, well, temperature. The formula for energy (Joule) is <span class="math notranslate nohighlight">\(m*a*d\)</span> (mass times acceleration times distance), and in terms of dimensions, <span class="math notranslate nohighlight">\(M*L/T^2*L = L^2*M/T^2\)</span> (where in dimensions, capital <span class="math notranslate nohighlight">\(T\)</span> is time). Clearly, these dimensions are incompatible. A more subtle case might be trying to convert <strong>energy</strong> to <strong>power</strong> (again, not allowed):</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -675,23 +610,16 @@ convert <strong>energy</strong> to <strong>power</strong> (again, not allowed):<
 </div>
 <div class="section" id="Other-Common-Errors">
 <h2>Other Common Errors<a class="headerlink" href="#Other-Common-Errors" title="Permalink to this headline">¶</a></h2>
-<p>Other common errors generated from using ThermoState will raise
-<code class="docutils literal notranslate"><span class="pre">StateErrors</span></code>. These errors may be due to</p>
+<p>Other common errors generated from using ThermoState will raise <code class="docutils literal notranslate"><span class="pre">StateErrors</span></code>. These errors may be due to</p>
 <ol class="arabic simple">
-<li>Not specifying enough properties to fix the state, or specifying too
-many properties to fix the state</li>
-<li>Specifying a pair of properties that are not independent at the
-desired condtions</li>
-<li>Entering an unsupported pair of property inputs (the currently
-unsupported pairs are <code class="docutils literal notranslate"><span class="pre">Tu</span></code>, <code class="docutils literal notranslate"><span class="pre">Th</span></code>, and <code class="docutils literal notranslate"><span class="pre">us</span></code>, due to limitations
-in CoolProp)</li>
-<li>Specifying a <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> with incorrect dimensions for the property
-input</li>
+<li>Not specifying enough properties to fix the state, or specifying too many properties to fix the state</li>
+<li>Specifying a pair of properties that are not independent at the desired condtions</li>
+<li>Entering an unsupported pair of property inputs (the currently unsupported pairs are <code class="docutils literal notranslate"><span class="pre">Tu</span></code>, <code class="docutils literal notranslate"><span class="pre">Th</span></code>, and <code class="docutils literal notranslate"><span class="pre">us</span></code>, due to limitations in CoolProp)</li>
+<li>Specifying a <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> with incorrect dimensions for the property input</li>
 </ol>
 <p>An example demonstrating #4 from above:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -715,14 +643,9 @@ input</li>
 </div>
 <div class="section" id="Summary">
 <h2>Summary<a class="headerlink" href="#Summary" title="Permalink to this headline">¶</a></h2>
-<p>In summary, we need to use two (2) <strong>independent and intensive</strong>
-properties to fix the state of any simple compressible system. We need
-to define these quantities with units using Pint, and then use them to
-set the conditions of a State. Then, we can access the other properties
-of the State by using the attributes.</p>
+<p>In summary, we need to use two (2) <strong>independent and intensive</strong> properties to fix the state of any simple compressible system. We need to define these quantities with units using Pint, and then use them to set the conditions of a State. Then, we can access the other properties of the State by using the attributes.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -837,7 +760,7 @@ x_3 = None
   </a>
   
   |
-  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
   &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
   
   |

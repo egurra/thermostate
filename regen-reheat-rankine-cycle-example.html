@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Regen-Reheat Rankine Cycle Example &#8212; thermostate 0.5.1.dev0 documentation</title>
+    <title>Regen-Reheat Rankine Cycle Example &#8212; thermostate 0.5.2.dev0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Cascade Refrigeration Cycle Example" href="cascade-refrigeration-cycle-example.html" />
@@ -89,18 +90,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -140,9 +141,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -150,7 +151,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -199,14 +200,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Regen-Reheat-Rankine-Cycle-Example">
 <h1>Regen-Reheat Rankine Cycle Example<a class="headerlink" href="#Regen-Reheat-Rankine-Cycle-Example" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="Imports">
 <h2>Imports<a class="headerlink" href="#Imports" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -219,8 +253,7 @@ div.nboutput div.output_area.stderr {
 <div class="section" id="Definitions">
 <h2>Definitions<a class="headerlink" href="#Definitions" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -245,28 +278,12 @@ div.nboutput div.output_area.stderr {
 <hr class="docutils" />
 <div class="section" id="Problem-Statement">
 <h2>Problem Statement<a class="headerlink" href="#Problem-Statement" title="Permalink to this headline">¶</a></h2>
-<p>Consider a regenerative vapor power cycle with two feedwater heaters, a
-closed one and an open one, and reheat. Steam enters the first turbine
-stage at 12.0 MPa, 480.0 celsius, and expands to 2.0 MPa. Some steam is
-extracted at 2.0 MPa and bled to the closed feedwater heater. The
-remainder is reheated at 2.0 MPa to 440.0 celsius and then expands
-through the second stage turbine, where an additional amount of steam is
-extracted and bled into the open feedwater heater operating at 0.3 MPa.
-The steam expanding through the third stage turbine exits at the
-condenser pressure of 6.0 kPa, and the steam exits the condenser as a
-saturated liquid at 6.0 kPa. Feedwater leaves the closed heater at 210.0
-celsius, 12.0 MPa, and condensate exiting as saturated liquid at 2.0 MPa
-is trapped into the open feedwater heater. Saturated liquid at 0.3 MPa
-leaves the open feedwater heater. Assume all pumps and turbine stages
-operate isentropically. Determine for the cycle</p>
+<p>Consider a regenerative vapor power cycle with two feedwater heaters, a closed one and an open one, and reheat. Steam enters the first turbine stage at 12.0 MPa, 480.0 celsius, and expands to 2.0 MPa. Some steam is extracted at 2.0 MPa and bled to the closed feedwater heater. The remainder is reheated at 2.0 MPa to 440.0 celsius and then expands through the second stage turbine, where an additional amount of steam is extracted and bled into the open feedwater heater operating at 0.3 MPa. The
+steam expanding through the third stage turbine exits at the condenser pressure of 6.0 kPa, and the steam exits the condenser as a saturated liquid at 6.0 kPa. Feedwater leaves the closed heater at 210.0 celsius, 12.0 MPa, and condensate exiting as saturated liquid at 2.0 MPa is trapped into the open feedwater heater. Saturated liquid at 0.3 MPa leaves the open feedwater heater. Assume all pumps and turbine stages operate isentropically. Determine for the cycle</p>
 <ol class="arabic simple">
-<li>the heat transfer to the working fluid passing through the steam
-generator and reheater, in kJ per kg of steam entering the first
-stage turbine</li>
+<li>the heat transfer to the working fluid passing through the steam generator and reheater, in kJ per kg of steam entering the first stage turbine</li>
 <li>the thermal efficiency</li>
-<li>the heat transfer from the working fluid passing through the
-condenser to the cooling water, in kJ per kg of steam entering the
-first stage turbine</li>
+<li>the heat transfer from the working fluid passing through the condenser to the cooling water, in kJ per kg of steam entering the first stage turbine</li>
 </ol>
 </div>
 <hr class="docutils" />
@@ -274,23 +291,18 @@ first stage turbine</li>
 <h2>Solution<a class="headerlink" href="#Solution" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="1.-the-heat-transfer-in-the-steam-generator-and-reheater">
 <h3>1. the heat transfer in the steam generator and reheater<a class="headerlink" href="#1.-the-heat-transfer-in-the-steam-generator-and-reheater" title="Permalink to this headline">¶</a></h3>
-<p>The heat transfer can be found by drawing a control volume around the
-boiler/steam generator, including the reheat portion. Then, the first
-law reduces to</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\dot{Q}_{in} &amp;= \dot{m}_1\left(h_1 - h_{10}\right) + \dot{m}_3\left(h_3 - h_2\right) \\
-\frac{\dot{Q}_{in}}{\dot{m}_1} &amp;= \left(h_1 - h_{10}\right) + \left(1 - y'\right)\left(h_3 - h_2\right)
-\end{align*}</div><p>where <span class="math notranslate nohighlight">\(y'\)</span> is the fraction of the flow extracted to the closed
-feedwater heater. To find the value of <span class="math notranslate nohighlight">\(y'\)</span>, we draw a control
-volume around the closed feedwater heater and solve for <span class="math notranslate nohighlight">\(y'\)</span></p>
-<div class="math notranslate nohighlight">
-\begin{align*}
+<p>The heat transfer can be found by drawing a control volume around the boiler/steam generator, including the reheat portion. Then, the first law reduces to</p>
+<p><span class="math">\begin{align*}
+\dot{Q}_{in} &= \dot{m}_1\left(h_1 - h_{10}\right) + \dot{m}_3\left(h_3 - h_2\right) \\
+\frac{\dot{Q}_{in}}{\dot{m}_1} &= \left(h_1 - h_{10}\right) + \left(1 - y'\right)\left(h_3 - h_2\right)
+\end{align*}</span></p>
+<p>where <span class="math notranslate nohighlight">\(y'\)</span> is the fraction of the flow extracted to the closed feedwater heater. To find the value of <span class="math notranslate nohighlight">\(y'\)</span>, we draw a control volume around the closed feedwater heater and solve for <span class="math notranslate nohighlight">\(y'\)</span></p>
+<p><span class="math">\begin{align*}
 y' = \frac{h_{10} - h_9}{h_2 - h_{11}}
-\end{align*}</div><p>First, fix the values for all the states using given information.</p>
+\end{align*}</span></p>
+<p>First, fix the values for all the states using given information.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -374,13 +386,13 @@ y' = \frac{h_{10} - h_9}{h_2 - h_{11}}
 <p>Summarizing the states,</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
+<col width="8%" />
+<col width="18%" />
+<col width="12%" />
+<col width="17%" />
+<col width="20%" />
+<col width="9%" />
+<col width="17%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">State</th>
@@ -394,173 +406,105 @@ y' = \frac{h_{10} - h_9}{h_2 - h_{11}}
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
-<td>480.00
-celsius</td>
-<td>12.00
-MPa</td>
-<td>3295.29
-kJ/kg</td>
-<td>6.4186
-kJ/(K
-kg)</td>
+<td>480.00 celsius</td>
+<td>12.00 MPa</td>
+<td>3295.29 kJ/kg</td>
+<td>6.4186 kJ/(K kg)</td>
 <td>—</td>
-<td>supercr
-itical</td>
+<td>supercritical</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>225.46
-celsius</td>
-<td>2.00
-MPa</td>
-<td>2837.44
-kJ/kg</td>
-<td>6.4186
-kJ/(K
-kg)</td>
+<td>225.46 celsius</td>
+<td>2.00 MPa</td>
+<td>2837.44 kJ/kg</td>
+<td>6.4186 kJ/(K kg)</td>
 <td>—</td>
 <td>gas</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>440.00
-celsius</td>
-<td>2.00
-MPa</td>
-<td>3336.25
-kJ/kg</td>
-<td>7.2560
-kJ/(K
-kg)</td>
+<td>440.00 celsius</td>
+<td>2.00 MPa</td>
+<td>3336.25 kJ/kg</td>
+<td>7.2560 kJ/(K kg)</td>
 <td>—</td>
-<td>supercr
-itical</td>
+<td>supercritical</td>
 </tr>
 <tr class="row-odd"><td>4</td>
-<td>187.07
-celsius</td>
-<td>0.30
-MPa</td>
-<td>2839.24
-kJ/kg</td>
-<td>7.2560
-kJ/(K
-kg)</td>
+<td>187.07 celsius</td>
+<td>0.30 MPa</td>
+<td>2839.24 kJ/kg</td>
+<td>7.2560 kJ/(K kg)</td>
 <td>—</td>
 <td>gas</td>
 </tr>
 <tr class="row-even"><td>5</td>
-<td>36.16
-celsius</td>
-<td>6.00
-kPa</td>
-<td>2234.74
-kJ/kg</td>
-<td>7.2560
-kJ/(K
-kg)</td>
+<td>36.16 celsius</td>
+<td>6.00 kPa</td>
+<td>2234.74 kJ/kg</td>
+<td>7.2560 kJ/(K kg)</td>
 <td>86.26%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>6</td>
-<td>36.16
-celsius</td>
-<td>6.00
-kPa</td>
-<td>151.48
-kJ/kg</td>
-<td>0.5208
-kJ/(K
-kg)</td>
+<td>36.16 celsius</td>
+<td>6.00 kPa</td>
+<td>151.48 kJ/kg</td>
+<td>0.5208 kJ/(K kg)</td>
 <td>0.00%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>7</td>
-<td>36.17
-celsius</td>
-<td>0.30
-MPa</td>
-<td>151.77
-kJ/kg</td>
-<td>0.5208
-kJ/(K
-kg)</td>
+<td>36.17 celsius</td>
+<td>0.30 MPa</td>
+<td>151.77 kJ/kg</td>
+<td>0.5208 kJ/(K kg)</td>
 <td>—</td>
 <td>liquid</td>
 </tr>
 <tr class="row-odd"><td>8</td>
-<td>133.52
-celsius</td>
-<td>0.30
-MPa</td>
-<td>561.43
-kJ/kg</td>
-<td>1.6717
-kJ/(K
-kg)</td>
+<td>133.52 celsius</td>
+<td>0.30 MPa</td>
+<td>561.43 kJ/kg</td>
+<td>1.6717 kJ/(K kg)</td>
 <td>0.00%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>9</td>
-<td>134.62
-celsius</td>
-<td>12.00
-MPa</td>
-<td>573.95
-kJ/kg</td>
-<td>1.6717
-kJ/(K
-kg)</td>
+<td>134.62 celsius</td>
+<td>12.00 MPa</td>
+<td>573.95 kJ/kg</td>
+<td>1.6717 kJ/(K kg)</td>
 <td>—</td>
 <td>liquid</td>
 </tr>
 <tr class="row-odd"><td>10</td>
-<td>210.00
-celsius</td>
-<td>12.00
-MPa</td>
-<td>901.29
-kJ/kg</td>
-<td>2.4077
-kJ/(K
-kg)</td>
+<td>210.00 celsius</td>
+<td>12.00 MPa</td>
+<td>901.29 kJ/kg</td>
+<td>2.4077 kJ/(K kg)</td>
 <td>—</td>
 <td>liquid</td>
 </tr>
 <tr class="row-even"><td>11</td>
-<td>212.38
-celsius</td>
-<td>2.00
-MPa</td>
-<td>908.50
-kJ/kg</td>
-<td>2.4468
-kJ/(K
-kg)</td>
+<td>212.38 celsius</td>
+<td>2.00 MPa</td>
+<td>908.50 kJ/kg</td>
+<td>2.4468 kJ/(K kg)</td>
 <td>0.00%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>12</td>
-<td>133.52
-celsius</td>
-<td>0.30
-MPa</td>
-<td>908.50
-kJ/kg</td>
-<td>2.5252
-kJ/(K
-kg)</td>
+<td>133.52 celsius</td>
+<td>0.30 MPa</td>
+<td>908.50 kJ/kg</td>
+<td>2.5252 kJ/(K kg)</td>
 <td>16.04%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 </tbody>
 </table>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -569,31 +513,21 @@ e</td>
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The heat transfer input is <span class="math notranslate nohighlight">\(\dot{Q}_{in}/\dot{m} =\)</span>
-2808.15 kJ/kg</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The heat transfer input is <span class="math notranslate nohighlight">\(\dot{Q}_{in}/\dot{m} =\)</span> 2808.15 kJ/kg</p>
 </div></div>
 <div class="section" id="2.-the-thermal-efficiency">
 <h3>2. the thermal efficiency<a class="headerlink" href="#2.-the-thermal-efficiency" title="Permalink to this headline">¶</a></h3>
-<p>To find the thermal efficiency, we need to calculate the net work output
-of the power plant. This involves all three turbine stages and both of
-the pump stages. First, we need to calculate the mass fractions of the
-flow, <span class="math notranslate nohighlight">\(y'\)</span> and <span class="math notranslate nohighlight">\(y''\)</span>. To find these values, we need to draw
-control volumes around the feedwater heaters, moving from high pressure
-to low pressure. <span class="math notranslate nohighlight">\(y'\)</span> has already been found, so we need to find
-<span class="math notranslate nohighlight">\(y''\)</span></p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-0 &amp;= \dot{m}_7 h_7 + \dot{m}_{12} h_{12} + \dot{m}_{4} h_4 - \dot{m}_8 h_8
-\end{align*}</div><p>Dividing through by <span class="math notranslate nohighlight">\(\dot{m}_1\)</span> and noting that
-<span class="math notranslate nohighlight">\(\dot{m}_8 = \dot{m}_1\)</span>, <span class="math notranslate nohighlight">\(\dot{m}_{12} = \dot{m}_2\)</span>, and
-<span class="math notranslate nohighlight">\(\dot{m}_7 = \dot{m}_5\)</span>,</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-0 &amp;= (1 - y' - y'')h_7 + y' h_{12} + y'' h_4 - h_8 \\
-y'' &amp;= \frac{h_8 - h_7 + y'(h_7 - h_{12})}{h_4 - h_7}
-\end{align*}</div><div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<p>To find the thermal efficiency, we need to calculate the net work output of the power plant. This involves all three turbine stages and both of the pump stages. First, we need to calculate the mass fractions of the flow, <span class="math notranslate nohighlight">\(y'\)</span> and <span class="math notranslate nohighlight">\(y''\)</span>. To find these values, we need to draw control volumes around the feedwater heaters, moving from high pressure to low pressure. <span class="math notranslate nohighlight">\(y'\)</span> has already been found, so we need to find <span class="math notranslate nohighlight">\(y''\)</span></p>
+<p><span class="math">\begin{align*}
+0 &= \dot{m}_7 h_7 + \dot{m}_{12} h_{12} + \dot{m}_{4} h_4 - \dot{m}_8 h_8
+\end{align*}</span></p>
+<p>Dividing through by <span class="math notranslate nohighlight">\(\dot{m}_1\)</span> and noting that <span class="math notranslate nohighlight">\(\dot{m}_8 = \dot{m}_1\)</span>, <span class="math notranslate nohighlight">\(\dot{m}_{12} = \dot{m}_2\)</span>, and <span class="math notranslate nohighlight">\(\dot{m}_7 = \dot{m}_5\)</span>,</p>
+<p><span class="math">\begin{align*}
+0 &= (1 - y' - y'')h_7 + y' h_{12} + y'' h_4 - h_8 \\
+y'' &= \frac{h_8 - h_7 + y'(h_7 - h_{12})}{h_4 - h_7}
+\end{align*}</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -602,13 +536,12 @@ y'' &amp;= \frac{h_8 - h_7 + y'(h_7 - h_{12})}{h_4 - h_7}
 </div>
 </div>
 <p>Now, for the turbine stages,</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\dot{W}_t &amp;= \dot{m}_1(h_1 - h_2) + \dot{m}_3 (h_3 - h_4) + \dot{m}_5 (h_4 - h_5) \\
-\frac{\dot{W}_t}{\dot{m}_1} &amp;= h_1 - h_2 + (1 - y')(h_3 - h_4) + (1 - y' - y'')(h_4 - h_5)
-\end{align*}</div><div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<p><span class="math">\begin{align*}
+\dot{W}_t &= \dot{m}_1(h_1 - h_2) + \dot{m}_3 (h_3 - h_4) + \dot{m}_5 (h_4 - h_5) \\
+\frac{\dot{W}_t}{\dot{m}_1} &= h_1 - h_2 + (1 - y')(h_3 - h_4) + (1 - y' - y'')(h_4 - h_5)
+\end{align*}</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -617,13 +550,12 @@ y'' &amp;= \frac{h_8 - h_7 + y'(h_7 - h_{12})}{h_4 - h_7}
 </div>
 </div>
 <p>and for the pump stages</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\dot{W}_p &amp;= \dot{m}_6(h_6 - h_7) + \dot{m}_8(h_8 - h_9) \\
-\frac{\dot{W}_p}{\dot{m}_1} &amp;= (1 - y' - y'')(h_6 - h_7) + h_8 - h_9
-\end{align*}</div><div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<p><span class="math">\begin{align*}
+\dot{W}_p &= \dot{m}_6(h_6 - h_7) + \dot{m}_8(h_8 - h_9) \\
+\frac{\dot{W}_p}{\dot{m}_1} &= (1 - y' - y'')(h_6 - h_7) + h_8 - h_9
+\end{align*}</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -632,20 +564,17 @@ y'' &amp;= \frac{h_8 - h_7 + y'(h_7 - h_{12})}{h_4 - h_7}
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The thermal efficiency of the cycle is <span class="math notranslate nohighlight">\(\eta =\)</span> 0.4617
-= 46.17%</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The thermal efficiency of the cycle is <span class="math notranslate nohighlight">\(\eta =\)</span> 0.4617 = 46.17%</p>
 </div></div>
 <div class="section" id="3.-the-rate-of-heat-transfer-out-of-the-condenser-into-the-cooling-water">
 <h3>3. the rate of heat transfer out of the condenser into the cooling water<a class="headerlink" href="#3.-the-rate-of-heat-transfer-out-of-the-condenser-into-the-cooling-water" title="Permalink to this headline">¶</a></h3>
-<p>Drawing a control volume around the condenser, we can find the rate of
-heat transfer as</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\dot{Q}_{out} &amp;= \dot{m}_5(h_6 - h_5) \\
-\frac{\dot{Q}_{out}}{\dot{m}_1} &amp;= (1 - y' - y'') (h_6 - h_5)
-\end{align*}</div><div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<p>Drawing a control volume around the condenser, we can find the rate of heat transfer as</p>
+<p><span class="math">\begin{align*}
+\dot{Q}_{out} &= \dot{m}_5(h_6 - h_5) \\
+\frac{\dot{Q}_{out}}{\dot{m}_1} &= (1 - y' - y'') (h_6 - h_5)
+\end{align*}</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -653,8 +582,7 @@ heat transfer as</p>
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The rate of heat transfer is
-<span class="math notranslate nohighlight">\(\dot{Q}_{out}/\dot{m}_1 =\)</span> -1511.72 kJ/kg</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The rate of heat transfer is <span class="math notranslate nohighlight">\(\dot{Q}_{out}/\dot{m}_1 =\)</span> -1511.72 kJ/kg</p>
 </div></div>
 </div>
 </div>
@@ -744,7 +672,7 @@ heat transfer as</p>
   </a>
   
   |
-  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
   &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
   
   |

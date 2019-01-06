@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Rankine Cycle Example &#8212; thermostate 0.5.1.dev0 documentation</title>
+    <title>Rankine Cycle Example &#8212; thermostate 0.5.2.dev0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Regen-Reheat Rankine Cycle Example" href="regen-reheat-rankine-cycle-example.html" />
@@ -89,18 +90,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -140,9 +141,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -150,7 +151,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -199,14 +200,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Rankine-Cycle-Example">
 <h1>Rankine Cycle Example<a class="headerlink" href="#Rankine-Cycle-Example" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="Imports">
 <h2>Imports<a class="headerlink" href="#Imports" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -222,8 +256,7 @@ div.nboutput div.output_area.stderr {
 <div class="section" id="Definitions">
 <h2>Definitions<a class="headerlink" href="#Definitions" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -244,43 +277,19 @@ div.nboutput div.output_area.stderr {
 <hr class="docutils" />
 <div class="section" id="Problem-Statement">
 <h2>Problem Statement<a class="headerlink" href="#Problem-Statement" title="Permalink to this headline">¶</a></h2>
-<p>Water is the working fluid in an ideal regenerative Rankine cycle with
-one open feedwater heater. Superheated vapor enters the first-stage
-turbine at 16.0 MPa, 560.0 celsius with a mass flow rate of 120.0 kg/s.
-Steam expands through the first-stage turbine to 1.0 MPa where it is
-extracted and diverted to the open feedwater heater. The remainder
-expands through the second-stage turbine to the condenser pressure of
-8.0 kPa. Saturated liquid exits the feedwater heater at 1.0 MPa.
-Determine</p>
+<p>Water is the working fluid in an ideal regenerative Rankine cycle with one open feedwater heater. Superheated vapor enters the first-stage turbine at 16.0 MPa, 560.0 celsius with a mass flow rate of 120.0 kg/s. Steam expands through the first-stage turbine to 1.0 MPa where it is extracted and diverted to the open feedwater heater. The remainder expands through the second-stage turbine to the condenser pressure of 8.0 kPa. Saturated liquid exits the feedwater heater at 1.0 MPa. Determine</p>
 <ol class="arabic simple">
 <li>the net power developed, in MW</li>
-<li>the rate of heat transfer to the steam passing through the boiler, in
-MW</li>
+<li>the rate of heat transfer to the steam passing through the boiler, in MW</li>
 <li>the overall cycle thermal efficiency</li>
-<li>For extraction pressures (<span class="math notranslate nohighlight">\(p_2\)</span>) ranging from <span class="math notranslate nohighlight">\(p_{low} =\)</span>
-0.1 MPa to <span class="math notranslate nohighlight">\(p_{high} =\)</span> 7.5 MPa, calculate the extracted mass
-fraction <span class="math notranslate nohighlight">\(y\)</span> and the overall cycle thermal efficiency. Sketch a
-plot of <span class="math notranslate nohighlight">\(\eta\)</span> (on the y-axis) vs. <span class="math notranslate nohighlight">\(y\)</span> (on the x-axis).
-Use at least 10 values to construct the plot. <strong>Discuss any trends
-you find.</strong></li>
+<li>For extraction pressures (<span class="math notranslate nohighlight">\(p_2\)</span>) ranging from <span class="math notranslate nohighlight">\(p_{low} =\)</span> 0.1 MPa to <span class="math notranslate nohighlight">\(p_{high} =\)</span> 7.5 MPa, calculate the extracted mass fraction <span class="math notranslate nohighlight">\(y\)</span> and the overall cycle thermal efficiency. Sketch a plot of <span class="math notranslate nohighlight">\(\eta\)</span> (on the y-axis) vs. <span class="math notranslate nohighlight">\(y\)</span> (on the x-axis). Use at least 10 values to construct the plot. <strong>Discuss any trends you find.</strong></li>
 </ol>
 </div>
 <hr class="docutils" />
 <div class="section" id="Hint">
 <h2>Hint<a class="headerlink" href="#Hint" title="Permalink to this headline">¶</a></h2>
-<p>To do the plotting, we will construct a list that contains pressures
-from 0.1 MPa to 7.5 MPa and use a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop to iterate over that
-list. As we do the iteration, we will fix the values for the states that
-have changed, and re-compute <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\eta\)</span> on each
-iteration. We will store the value for <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\eta\)</span> at
-each pressure in a list, then plot the lists.</p>
-<p>To create the list of pressures, we will use a function from the
-<code class="docutils literal notranslate"><span class="pre">numpy</span></code> library called <code class="docutils literal notranslate"><span class="pre">linspace</span></code> that creates a range of numbers
-when the start, stop, and number of values are input. If we multiply the
-range by the <code class="docutils literal notranslate"><span class="pre">units</span></code> that we want, it will work out. Note: Not all of
-the state change every time the extraction pressure is changed. You only
-need to recompute the states that change. The code will look something
-like this:</p>
+<p>To do the plotting, we will construct a list that contains pressures from 0.1 MPa to 7.5 MPa and use a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop to iterate over that list. As we do the iteration, we will fix the values for the states that have changed, and re-compute <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\eta\)</span> on each iteration. We will store the value for <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\eta\)</span> at each pressure in a list, then plot the lists.</p>
+<p>To create the list of pressures, we will use a function from the <code class="docutils literal notranslate"><span class="pre">numpy</span></code> library called <code class="docutils literal notranslate"><span class="pre">linspace</span></code> that creates a range of numbers when the start, stop, and number of values are input. If we multiply the range by the <code class="docutils literal notranslate"><span class="pre">units</span></code> that we want, it will work out. Note: Not all of the state change every time the extraction pressure is changed. You only need to recompute the states that change. The code will look something like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_values</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">eta_values</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">p_2</span> <span class="ow">in</span> <span class="n">linspace</span><span class="p">(</span><span class="n">p_low</span><span class="p">,</span> <span class="n">p_high</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">*</span><span class="n">units</span><span class="o">.</span><span class="n">MPa</span><span class="p">:</span>
@@ -308,19 +317,16 @@ like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;line label name&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The rest of the code below the plotting is to make the plot look nicer.
-Feel free to copy-paste this code into your solution.</p>
+<p>The rest of the code below the plotting is to make the plot look nicer. Feel free to copy-paste this code into your solution.</p>
 </div>
 <hr class="docutils" />
 <div class="section" id="Solution">
 <h2>Solution<a class="headerlink" href="#Solution" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="1.-the-net-power-developed">
 <h3>1. the net power developed<a class="headerlink" href="#1.-the-net-power-developed" title="Permalink to this headline">¶</a></h3>
-<p>The first step is to fix all of the states, then calculate the value for
-<span class="math notranslate nohighlight">\(y\)</span>.</p>
+<p>The first step is to fix all of the states, then calculate the value for <span class="math notranslate nohighlight">\(y\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -378,13 +384,13 @@ Feel free to copy-paste this code into your solution.</p>
 <p>Summarizing the states:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
-<col width="14%" />
+<col width="8%" />
+<col width="17%" />
+<col width="12%" />
+<col width="16%" />
+<col width="19%" />
+<col width="12%" />
+<col width="16%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">State</th>
@@ -398,115 +404,70 @@ Feel free to copy-paste this code into your solution.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
-<td>560.00
-celsius</td>
-<td>16.00
-MPa</td>
-<td>3467.17
-kJ/kg</td>
-<td>6.5163
-kJ/(K
-kg)</td>
+<td>560.00 celsius</td>
+<td>16.00 MPa</td>
+<td>3467.17 kJ/kg</td>
+<td>6.5163 kJ/(K kg)</td>
 <td>—</td>
-<td>supercr
-itical</td>
+<td>supercritical</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>179.88
-celsius</td>
-<td>1.00
-MPa</td>
-<td>2745.98
-kJ/kg</td>
-<td>6.5163
-kJ/(K
-kg)</td>
+<td>179.88 celsius</td>
+<td>1.00 MPa</td>
+<td>2745.98 kJ/kg</td>
+<td>6.5163 kJ/(K kg)</td>
 <td>98.45%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>41.51
-celsius</td>
-<td>8.00
-kPa</td>
-<td>2037.82
-kJ/kg</td>
-<td>6.5163
-kJ/(K
-kg)</td>
+<td>41.51 celsius</td>
+<td>8.00 kPa</td>
+<td>2037.82 kJ/kg</td>
+<td>6.5163 kJ/(K kg)</td>
 <td>77.59%</td>
-<td>twophas
-e</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>4</td>
-<td>41.51
-celsius</td>
-<td>8.00
-kPa</td>
-<td>173.84
-kJ/kg</td>
-<td>0.5925
-kJ/(K
-kg)</td>
-<td>0.00%
-pct</td>
-<td>twophas
-e</td>
+<td>41.51 celsius</td>
+<td>8.00 kPa</td>
+<td>173.84 kJ/kg</td>
+<td>0.5925 kJ/(K kg)</td>
+<td>0.00% pct</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>5</td>
-<td>41.54
-celsius</td>
-<td>1.00
-MPa</td>
-<td>174.84
-kJ/kg</td>
-<td>0.5925
-kJ/(K
-kg)</td>
+<td>41.54 celsius</td>
+<td>1.00 MPa</td>
+<td>174.84 kJ/kg</td>
+<td>0.5925 kJ/(K kg)</td>
 <td>—</td>
 <td>liquid</td>
 </tr>
 <tr class="row-odd"><td>6</td>
-<td>179.88
-celsius</td>
-<td>1.00
-MPa</td>
-<td>762.52
-kJ/kg</td>
-<td>2.1381
-kJ/(K
-kg)</td>
-<td>0.00%
-pct</td>
-<td>twophas
-e</td>
+<td>179.88 celsius</td>
+<td>1.00 MPa</td>
+<td>762.52 kJ/kg</td>
+<td>2.1381 kJ/(K kg)</td>
+<td>0.00% pct</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>7</td>
-<td>181.95
-celsius</td>
-<td>16.00
-MPa</td>
-<td>779.35
-kJ/kg</td>
-<td>2.1381
-kJ/(K
-kg)</td>
+<td>181.95 celsius</td>
+<td>16.00 MPa</td>
+<td>779.35 kJ/kg</td>
+<td>2.1381 kJ/(K kg)</td>
 <td>—</td>
 <td>liquid</td>
 </tr>
 </tbody>
 </table>
-<p>This gives a value for <span class="math notranslate nohighlight">\(y =\)</span> 0.2286 = 22.86% of the flow being
-directed into the feedwater heater. Then, the net work output of the
-cycle is</p>
-<div class="math notranslate nohighlight">
-\begin{align*}
-\dot{W}_{net} &amp;= \dot{m}_1(h_1 - h_2) + \dot{m}_3(h_2 - h_3) + \dot{m}_3(h_4 - h_5) + \dot{m}_1(h_6 - h_7) \\
-\dot{W}_{net} &amp;= \dot{m}_1\left[(h_1 - h_2) + (1 - y)(h_2 - h_3) + (1 - y)(h_4 - h_5) + (h_6 - h_7)\right]
-\end{align*}</div><div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<p>This gives a value for <span class="math notranslate nohighlight">\(y =\)</span> 0.2286 = 22.86% of the flow being directed into the feedwater heater. Then, the net work output of the cycle is</p>
+<p><span class="math">\begin{align*}
+\dot{W}_{net} &= \dot{m}_1(h_1 - h_2) + \dot{m}_3(h_2 - h_3) + \dot{m}_3(h_4 - h_5) + \dot{m}_1(h_6 - h_7) \\
+\dot{W}_{net} &= \dot{m}_1\left[(h_1 - h_2) + (1 - y)(h_2 - h_3) + (1 - y)(h_4 - h_5) + (h_6 - h_7)\right]
+\end{align*}</span></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -514,8 +475,7 @@ cycle is</p>
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The net work output from the cycle is
-<span class="math notranslate nohighlight">\(\dot{W}_{net} =\)</span> 149.99 MW</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The net work output from the cycle is <span class="math notranslate nohighlight">\(\dot{W}_{net} =\)</span> 149.99 MW</p>
 </div></div>
 <div class="section" id="2.-the-heat-transfer-input">
 <h3>2. the heat transfer input<a class="headerlink" href="#2.-the-heat-transfer-input" title="Permalink to this headline">¶</a></h3>
@@ -523,8 +483,7 @@ cycle is</p>
 <div class="math notranslate nohighlight">
 \[\dot{Q}_{in} = \dot{m}_1(h_1 - h_7)\]</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -537,8 +496,7 @@ cycle is</p>
 <div class="section" id="3.-the-overall-cycle-thermal-efficiency">
 <h3>3. the overall cycle thermal efficiency<a class="headerlink" href="#3.-the-overall-cycle-thermal-efficiency" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -551,8 +509,7 @@ cycle is</p>
 <div class="section" id="4.-plot-\eta-vs-y">
 <h3>4. plot <span class="math notranslate nohighlight">\(\eta\)</span> vs <span class="math notranslate nohighlight">\(y\)</span><a class="headerlink" href="#4.-plot-\eta-vs-y" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -594,8 +551,7 @@ cycle is</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -614,14 +570,8 @@ cycle is</p>
 <img alt="_images/rankine-cycle-example_23_0.png" src="_images/rankine-cycle-example_23_0.png" />
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> Interestingly, as we vary the mass flow rate extracted to
-the feedwater heater, the overall thermal efficiency first increases,
-then decreases. The reason is because the thermal efficiency is the
-ratio of the work divided by the heat transfer. As <span class="math notranslate nohighlight">\(y\)</span> increases
-from 0.10 to 0.20, the work output decreases slightly, but the heat
-transfer decreases significantly. After about $y = $ 0.25, the work
-output decreases more quickly than the heat transfer decreases, and the
-thermal efficiency goes down.</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> Interestingly, as we vary the mass flow rate extracted to the feedwater heater, the overall thermal efficiency first increases, then decreases. The reason is because the thermal efficiency is the ratio of the work divided by the heat transfer. As <span class="math notranslate nohighlight">\(y\)</span> increases from 0.10 to 0.20, the work output decreases slightly, but the heat transfer decreases significantly. After about $y = $ 0.25, the work output decreases more quickly than the heat transfer decreases, and the thermal
+efficiency goes down.</p>
 </div></div>
 </div>
 </div>
@@ -711,7 +661,7 @@ thermal efficiency goes down.</p>
   </a>
   
   |
-  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
   &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
   
   |

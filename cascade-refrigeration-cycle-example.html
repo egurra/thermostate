@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Cascade Refrigeration Cycle Example &#8212; thermostate 0.5.1.dev0 documentation</title>
+    <title>Cascade Refrigeration Cycle Example &#8212; thermostate 0.5.2.dev0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -14,6 +14,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ThermoState" href="thermostate.html" />
@@ -89,18 +90,18 @@ div.nblast {
 
 /* input prompt */
 div.nbinput div.prompt pre {
-    color: #303F9F;
+    color: #307FC1;
 }
 
 /* output prompt */
 div.nboutput div.prompt pre {
-    color: #D84315;
+    color: #BF5B3D;
 }
 
 /* all prompts */
 div.nbinput div.prompt,
 div.nboutput div.prompt {
-    min-width: 8ex;
+    min-width: 5ex;
     padding-top: 0.4em;
     padding-right: 0.4em;
     text-align: right;
@@ -140,9 +141,9 @@ div.nboutput div.output_area {
 
 /* input area */
 div.nbinput div.input_area {
-    border: 1px solid #cfcfcf;
+    border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f7f7f7;
+    background: #f5f5f5;
 }
 
 /* override MathJax center alignment in output cells */
@@ -150,7 +151,7 @@ div.nboutput div[class*=MathJax] {
     text-align: left !important;
 }
 
-/* override sphinx.ext.pngmath center alignment in output cells */
+/* override sphinx.ext.imgmath center alignment in output cells */
 div.nboutput div.math p {
     text-align: left;
 }
@@ -199,14 +200,47 @@ div.nboutput div.output_area.stderr {
 
 .ansi-bold { font-weight: bold; }
 .ansi-underline { text-decoration: underline; }
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
 </style>
 <div class="section" id="Cascade-Refrigeration-Cycle-Example">
 <h1>Cascade Refrigeration Cycle Example<a class="headerlink" href="#Cascade-Refrigeration-Cycle-Example" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="Imports">
 <h2>Imports<a class="headerlink" href="#Imports" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -219,8 +253,7 @@ div.nboutput div.output_area.stderr {
 <div class="section" id="Definitions">
 <h2>Definitions<a class="headerlink" href="#Definitions" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -251,18 +284,8 @@ div.nboutput div.output_area.stderr {
 <hr class="docutils" />
 <div class="section" id="Problem-Statement">
 <h2>Problem Statement<a class="headerlink" href="#Problem-Statement" title="Permalink to this headline">¶</a></h2>
-<p>A two-stage cascade vapor-compression refrigeration system operates with
-R22 as the working fluid in the high-temperature cycle and R134A in the
-low-temperature cycle. For the R134A cycle, the working fluid enters the
-compressor as a saturated vapor at -30.0 fahrenheit and is compressed
-isentropically to 50 lbf/in.2 Saturated liquid leaves the intermediate
-heat exchanger at 50 lbf/in.2 and enters the expansion valve. For the
-R22 cycle, the working fluid enters the compressor as saturated vapor at
-a temperature 5 fahrenheit below that of the condensing temperature of
-the R134A in the intermediate heat exchanger. The R22 is compressed
-isentropically to 250 lbf/in.2 Saturated liquid then enters the
-expansion valve at 250 lbf/in.2. The refrigerating capacity of the
-cascade system is 20 ton_of_refrigeration. Determine</p>
+<p>A two-stage cascade vapor-compression refrigeration system operates with R22 as the working fluid in the high-temperature cycle and R134A in the low-temperature cycle. For the R134A cycle, the working fluid enters the compressor as a saturated vapor at -30.0 fahrenheit and is compressed isentropically to 50 lbf/in.2 Saturated liquid leaves the intermediate heat exchanger at 50 lbf/in.2 and enters the expansion valve. For the R22 cycle, the working fluid enters the compressor as saturated vapor
+at a temperature 5 fahrenheit below that of the condensing temperature of the R134A in the intermediate heat exchanger. The R22 is compressed isentropically to 250 lbf/in.2 Saturated liquid then enters the expansion valve at 250 lbf/in.2. The refrigerating capacity of the cascade system is 20 ton_of_refrigeration. Determine</p>
 <ol class="arabic simple">
 <li>the power input to each compressor, in BTU/min</li>
 <li>the overall coefficient of performance of the cascade cycle</li>
@@ -278,8 +301,7 @@ cascade system is 20 ton_of_refrigeration. Determine</p>
 \[\dot{W}_{cv} = \dot{m}(h_i - h_e)\]</div>
 <p>To find the enthalpies, we need to fix all of the states.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -342,11 +364,7 @@ cascade system is 20 ton_of_refrigeration. Determine</p>
 <col width="11%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">S
-t
-a
-t
-e</th>
+<tr class="row-odd"><th class="head">State</th>
 <th class="head">T</th>
 <th class="head">p</th>
 <th class="head">h</th>
@@ -357,157 +375,79 @@ e</th>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>1</td>
-<td>-30.00
-degF</td>
-<td>9.86
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>162.30
-btu /
-pound</td>
-<td>0.4196
-btu /
-degR /
-pound</td>
+<td>-30.00 degF</td>
+<td>9.86 pound_force_per_square_inch</td>
+<td>162.30 btu / pound</td>
+<td>0.4196 btu / degR / pound</td>
 <td>100.00%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>2</td>
-<td>58.23
-degF</td>
-<td>50.00
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>176.42
-btu /
-pound</td>
-<td>0.4196
-btu /
-degR /
-pound</td>
+<td>58.23 degF</td>
+<td>50.00 pound_force_per_square_inch</td>
+<td>176.42 btu / pound</td>
+<td>0.4196 btu / degR / pound</td>
 <td>—</td>
 <td>gas</td>
 </tr>
 <tr class="row-even"><td>3</td>
-<td>40.27
-degF</td>
-<td>50.00
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>88.65 btu
-/ pound</td>
-<td>0.2442
-btu /
-degR /
-pound</td>
+<td>40.27 degF</td>
+<td>50.00 pound_force_per_square_inch</td>
+<td>88.65 btu / pound</td>
+<td>0.2442 btu / degR / pound</td>
 <td>0.00%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>4</td>
-<td>-30.00
-degF</td>
-<td>9.86
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>88.65 btu
-/ pound</td>
-<td>0.2482
-btu /
-degR /
-pound</td>
+<td>-30.00 degF</td>
+<td>9.86 pound_force_per_square_inch</td>
+<td>88.65 btu / pound</td>
+<td>0.2482 btu / degR / pound</td>
 <td>22.96%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 <tr class="row-even"><td>5</td>
-<td>35.27
-degF</td>
-<td>76.59
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>174.42
-btu /
-pound</td>
-<td>0.4175
-btu /
-degR /
-pound</td>
+<td>35.27 degF</td>
+<td>76.59 pound_force_per_square_inch</td>
+<td>174.42 btu / pound</td>
+<td>0.4175 btu / degR / pound</td>
 <td>100.00%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>6</td>
-<td>146.75
-degF</td>
-<td>250.00
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>187.12
-btu /
-pound</td>
-<td>0.4175
-btu /
-degR /
-pound</td>
+<td>146.75 degF</td>
+<td>250.00 pound_force_per_square_inch</td>
+<td>187.12 btu / pound</td>
+<td>0.4175 btu / degR / pound</td>
 <td>—</td>
 <td>gas</td>
 </tr>
 <tr class="row-even"><td>7</td>
-<td>112.76
-degF</td>
-<td>250.00
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>110.14
-btu /
-pound</td>
-<td>0.2834
-btu /
-degR /
-pound</td>
+<td>112.76 degF</td>
+<td>250.00 pound_force_per_square_inch</td>
+<td>110.14 btu / pound</td>
+<td>0.2834 btu / degR / pound</td>
 <td>0.00%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 <tr class="row-odd"><td>8</td>
-<td>35.27
-degF</td>
-<td>76.59
-pound_for
-ce_per_sq
-uare_inch</td>
-<td>110.14
-btu /
-pound</td>
-<td>0.2876
-btu /
-degR /
-pound</td>
+<td>35.27 degF</td>
+<td>76.59 pound_force_per_square_inch</td>
+<td>110.14 btu / pound</td>
+<td>0.2876 btu / degR / pound</td>
 <td>26.55%</td>
-<td>twoph
-ase</td>
+<td>twophase</td>
 </tr>
 </tbody>
 </table>
 <p>The mass flow rate of the R134a is found from the refrigeration capacity</p>
 <div class="math notranslate nohighlight">
 \[\dot{m}_{\text{R134A}} = \frac{\dot{Q}_{in}}{h_1 - h_4}\]</div>
-<p>while the mass flow rate of the R22 is found from the intermediate heat
-exchanger</p>
+<p>while the mass flow rate of the R22 is found from the intermediate heat exchanger</p>
 <div class="math notranslate nohighlight">
 \[\dot{m}_{\text{R22}} = \frac{\dot{m}_{\text{R134A}}\left(h_2 - h_3\right)}{h_5 - h_8}\]</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -519,10 +459,7 @@ exchanger</p>
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The compressor work for the low-temperature cycle is
-<span class="math notranslate nohighlight">\(\dot{W}_{\text{R134A}} =\)</span> -766.52 btu / minute and the work for
-the high temperature cycle is <span class="math notranslate nohighlight">\(\dot{W}_{\text{R22}} =\)</span> -941.38 btu
-/ minute</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The compressor work for the low-temperature cycle is <span class="math notranslate nohighlight">\(\dot{W}_{\text{R134A}} =\)</span> -766.52 btu / minute and the work for the high temperature cycle is <span class="math notranslate nohighlight">\(\dot{W}_{\text{R22}} =\)</span> -941.38 btu / minute</p>
 </div></div>
 <div class="section" id="2.-The-coefficient-of-performance">
 <h3>2. The coefficient of performance<a class="headerlink" href="#2.-The-coefficient-of-performance" title="Permalink to this headline">¶</a></h3>
@@ -530,8 +467,7 @@ the high temperature cycle is <span class="math notranslate nohighlight">\(\dot{
 <div class="math notranslate nohighlight">
 \[\beta = \frac{\dot{Q}_{in}}{\lvert\dot{W}_{\text{R134A}} + \dot{W}_{\text{R22}}\rvert}\]</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -540,11 +476,7 @@ the high temperature cycle is <span class="math notranslate nohighlight">\(\dot{
 </pre></div>
 </div>
 </div>
-<div class="alert alert-success"><p><strong>Answer:</strong> The coefficient of performance is <span class="math notranslate nohighlight">\(\beta =\)</span> 2.34,
-while the maximum coefficient of performance for a refrigeration cycle
-operating between <span class="math notranslate nohighlight">\(T_C =\)</span> -30.00 degF and <span class="math notranslate nohighlight">\(T_H =\)</span> 112.76
-degF is <span class="math notranslate nohighlight">\(\beta_{\text{max}} =\)</span> 3.01 dimensionless. The actual
-cycle has a lower COP, so it is possible.</p>
+<div class="alert alert-success"><p><strong>Answer:</strong> The coefficient of performance is <span class="math notranslate nohighlight">\(\beta =\)</span> 2.34, while the maximum coefficient of performance for a refrigeration cycle operating between <span class="math notranslate nohighlight">\(T_C =\)</span> -30.00 degF and <span class="math notranslate nohighlight">\(T_H =\)</span> 112.76 degF is <span class="math notranslate nohighlight">\(\beta_{\text{max}} =\)</span> 3.01 dimensionless. The actual cycle has a lower COP, so it is possible.</p>
 </div></div>
 </div>
 </div>
@@ -634,7 +566,7 @@ cycle has a lower COP, so it is possible.</p>
   </a>
   
   |
-  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+  Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
   &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
   
   |
